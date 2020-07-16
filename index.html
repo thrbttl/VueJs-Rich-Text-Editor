@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>VueJs Rich Text Editor</title>
+    <link rel="stylesheet" href="style.css" />
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js"></script>
+    <script
+      src="https://kit.fontawesome.com/07bab029bf.js"
+      type="text/javascript"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+      integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk"
+      crossorigin="anonymous"
+    />
+  </head>
+  <body>
+    <div id="app" class="container">
+      <form
+        v-if="!show"
+        class="col-md-12 pt-5"
+        @submit.prevent="onSubmit($event)"
+      >
+        <fieldset class="text-info">
+          <div class="row">
+            <div class="col-12">
+              <div class="bg-white p-3 tool">
+                <button
+                  @click.prevent="execCmd('bold')"
+                  class="btn btn-white text-info"
+                >
+                  <i class="fa fa-bold"></i>
+                </button>
+                <button
+                  @click.prevent="execCmd('italic')"
+                  class="btn btn-white text-info"
+                >
+                  <i class="fa fa-italic"></i>
+                </button>
+                <button
+                  @click.prevent="execCmd('underline')"
+                  class="btn btn-white text-info"
+                >
+                  <i class="fa fa-underline"></i>
+                </button>
+                <button
+                  @click.prevent="execCmd('strikeThrough')"
+                  class="btn btn-white text-info"
+                >
+                  <i class="fa fa-strikethrough"></i>
+                </button>
+                <button
+                  @click.prevent="execCmd('justifyLeft')"
+                  class="btn btn-white text-info"
+                >
+                  <i class="fa fa-align-left"></i>
+                </button>
+                <button
+                  @click.prevent="execCmd('justifyCenter')"
+                  class="btn btn-white text-info"
+                >
+                  <i class="fa fa-align-center"></i>
+                </button>
+                <button
+                  @click.prevent="execCmd('justifyRight')"
+                  class="btn btn-white text-info"
+                >
+                  <i class="fa fa-align-right"></i>
+                </button>
+                <button
+                  @click.prevent="execCmd('justifyFull')"
+                  class="btn btn-white text-info"
+                >
+                  <i class="fa fa-align-justify"></i>
+                </button>
+                <button
+                  @click.prevent="execCmd('cut')"
+                  class="btn btn-white text-info"
+                >
+                  <i class="fa fa-cut"></i>
+                </button>
+                <button
+                  @click.prevent="execCmd('copy')"
+                  class="btn btn-white text-info"
+                >
+                  <i class="fa fa-copy"></i>
+                </button>
+                <button
+                  @click.prevent="execCmd('indent')"
+                  class="btn btn-white text-info"
+                >
+                  <i class="fa fa-indent"></i>
+                </button>
+                <button
+                  @click.prevent="execCmd('outdent')"
+                  class="btn btn-white text-info"
+                >
+                  <i class="fa fa-dedent"></i>
+                </button>
+                <button
+                  @click.prevent="execCmd('subscript')"
+                  class="btn btn-white text-info"
+                >
+                  <i class="fa fa-subscript"></i>
+                </button>
+                <button
+                  @click.prevent="execCmd('superscript')"
+                  class="btn btn-white text-info"
+                >
+                  <i class="fa fa-superscript"></i>
+                </button>
+                <button
+                  @click.prevent="execCmd('undo')"
+                  class="btn btn-white text-info"
+                >
+                  <i class="fa fa-undo"></i>
+                </button>
+                <button
+                  @click.prevent="execCmd('redo')"
+                  class="btn btn-white text-info"
+                >
+                  <i class="fa fa-repeat"></i>
+                </button>
+                <button
+                  @click.prevent="execCmd('insertUnorderedList')"
+                  class="btn btn-white text-info"
+                >
+                  <i class="fa fa-list-ul"></i>
+                </button>
+                <button
+                  @click.prevent="execCmd('insertOrderedList')"
+                  class="btn btn-white text-info"
+                >
+                  <i class="fa fa-list-ol"></i>
+                </button>
+                <button
+                  @click.prevent="execCmd('insertParagraph')"
+                  class="btn btn-white text-info"
+                >
+                  <i class="fa fa-paragraph"></i>
+                </button>
+                <select
+                  @change="execCommandWithArg('formatBlock', $event)"
+                  class="btn btn-white text-info"
+                >
+                  <option value="H1">H1</option>
+                  <option value="H2">H2</option>
+                  <option value="H3">H3</option>
+                  <option value="H4">H4</option>
+                  <option value="H5">H5</option>
+                  <option value="H6">H6</option>
+                </select>
+                <button
+                  @click.prevent="execCmd('insertHorizontalRule')"
+                  class="btn btn-white text-info"
+                >
+                  HR
+                </button>
+                <button
+                  @click.prevent="execCommand('createLink')"
+                  class="btn btn-white text-info"
+                >
+                  <i class="fa fa-link"></i>
+                </button>
+                <button
+                  @click.prevent="execCmd('unlink')"
+                  class="btn btn-white text-info"
+                >
+                  <i class="fa fa-unlink"></i>
+                </button>
+                <button
+                  @click.prevent="execCommandImg('insertImage')"
+                  class="btn btn-white text-info"
+                >
+                  <i class="fa fa-file-image-o"></i>
+                </button>
+                <hr />
+                <div class="toolKit">
+                  <span class="border p-2 m-2">
+                    <i class="fas fa-font"></i>
+                    <select
+                      @change="execCommandWithArg('fontName', $event)"
+                      class="btn btn-white"
+                    >
+                      <option value="Arial">Arial</option>
+                      <option value="Comic Sans MS">Comic Sans MS</option>
+                      <option value="Courier">Courier</option>
+                      <option value="Georgia">Georgia</option>
+                      <option value="Thoma">Thoma</option>
+                      <option value="Times New Roman">Times New Roman</option>
+                      <option value="Verdana">Verdana</option>
+                    </select>
+                  </span>
+                  <span class="border p-2 m-2">
+                    <i class="fas fa-text-height"></i>
+                    <select
+                      @change="execCommandWithArg('fontSize', $event)"
+                      class="btn btn-white"
+                    >
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                      <option value="6">6</option>
+                      <option value="7">7</option>
+                    </select>
+                  </span>
+
+                  <span class="border p-2 m-2">
+                    <i class="fas fa-eye-dropper"></i>
+                    <input
+                      type="color"
+                      @change="execCommandWithArg('foreColor', $event)"
+                    />
+                  </span>
+                  <span class="border p-2 m-2">
+                    <i class="fas fa-paint-roller"></i>
+                    <input
+                      type="color"
+                      @change="execCommandWithArg('hiliteColor', $event)"
+                    />
+                  </span>
+                  <button
+                    @click.prevent="execCmd('selectAll')"
+                    class="btn btn-white border bg-info text-white m-2"
+                  >
+                    Select All
+                  </button>
+                  <button
+                    type="submit"
+                    class="btn btn-white border bg-warning text-white my-2 mr-5 ml-auto"
+                  >
+                    Submit
+                  </button>
+                </div>
+              </div>
+
+              <div
+                id="output"
+                name="richTextField"
+                contenteditable="true"
+                class="textArea"
+              ></div>
+            </div>
+          </div>
+        </fieldset>
+      </form>
+      <div v-show="show" class="col-md-12">
+        <div class="col-md-11" id="textArea"></div>
+        <button
+          class="btn btn-white border bg-warning text-white my-2 mr-5 ml-auto"
+        >
+          <a style="text-decoration: none; color: #ffffff;" href="/">New</a>
+        </button>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>
